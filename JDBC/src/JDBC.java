@@ -1,41 +1,69 @@
-package JDBC;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import React, {useState, useEffect} from 'react';
 
 
-   public class JDBC {
-	public static void main(String[] args) throws SQLException {
-		String url = "jdbc:mysql://localhost:3306/company";
-		String uname = "Farhaz_khan";
-		String password = "mypassword";
-		String query = "select * from Employees";
-		
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		try {
-			Connection con = DriverManager.getConnection(url, uname, password);
-			Statement statement = con.createStatement();
-			ResultSet result = statement.executeQuery(query);
-			
-			while (result.next()) {
-				String CompanyData = "";
-				for (int i=1;i<=6;i++) {
-					CompanyData += result.getString(i) + ":";
-				}
-				System.out.println(CompanyData);
-			}
-			
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
 
+import axios from 'axios';
+
+ function OrderStatus() {
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const[users, setUsers] =useState([]);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const[singleUser, setSingleUser] = useState([]);
+    
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect (function(){
+
+        axios
+        .get('https://jsonplaceholder.typicode.com/users')
+        .then((response) => setUsers(response.data))
+        .then((error) => console.log(error));
+
+    });
+
+    const onddleChange = (e) => {
+      axios
+        .get("https://jsonplaceholder.typicode.com/users/" +e.target.value)
+        .then((response) => setSingleUser(response.data))
+        .then((error) => console.log(error));
+    }
+
+    
+  return (
+    <div>
+    <select onChange={onddleChange}>
+      <option value="0">--Select OrderID--</option>
+       { users.map((user) =>(
+        <option key={user.id}  value ={user.id}>{user.id}</option>
+        ))}
+    </select>
+    <br />
+    <br />
+    <table >
+      {/* <thead>
+        <tr>
+
+          <td>Order</td>
+          <td>Order confirm</td>
+          <td>Order in progress</td>
+          <td> order deliver</td>
+          
+        </tr>
+      </thead> */}
+      <tbody>
+        {
+
+          <tr>
+            <td>{singleUser.id}</td>
+            <td>{singleUser.name}</td>
+            <td>{singleUser.username}</td>
+            <td>{singleUser.email}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    </div>
+  )
 }
+export default OrderStatus;
